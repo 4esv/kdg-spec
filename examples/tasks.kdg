@@ -1,0 +1,13 @@
+str:"task"~
+bool:"done"!
+int:"priority"^
+str:"assignee"@
+date:"due"/
+
+Review pull request~false!1^alice@2024-01-20/
+Update documentation~true!2^bob@2024-01-18/
+Fix login bug~false!1^carol@2024-01-19/
+Refactor auth module~false!3^alice@2024-01-25/
+Write unit tests~false!2^bob@2024-01-22/
+Deploy to staging~false!1^carol@2024-01-20/
+Team standup notes~true!3^david@2024-01-17/

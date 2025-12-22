@@ -1,0 +1,10 @@
+str:"name"*
+str:"email"&
+str:"phone"#
+str:"company"~
+
+Alice Chen*alice.chen@example.com&555-0101#Acme Corp~
+Bob Smith*bob.smith@example.com&555-0102#Widgets Inc~
+Carol White*carol.white@example.com&Freelance~
+David Kim*d.kim@startup.io&555-0104#TechStartup~
+Eve Johnson*eve.j@bigco.com&555-0105#BigCo International~

@@ -1,0 +1,467 @@
+#!/usr/bin/env node
+/**
+ * KDG (Key-Delimiter Grammar) Parser - Reference Implementation
+ *
+ * Usage:
+ *   node kdg.js parse <file>           Parse KDG to JSON
+ *   node kdg.js validate <file>        Validate KDG syntax
+ *   node kdg.js convert <file> [fmt]   Convert to format (json, csv)
+ *
+ * This implementation has no dependencies. This was considered important.
+ */
+
+const fs = require("fs");
+const path = require("path");
+
+// Error classes
+class KDGError extends Error {
+  constructor(message, line = null) {
+    super(line ? `Line ${line}: ${message}` : message);
+    this.name = "KDGError";
+    this.line = line;
+  }
+}
+
+class DuplicateDelimiterError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "DuplicateDelimiterError";
+  }
+}
+
+class InvalidTypeError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "InvalidTypeError";
+  }
+}
+
+class MalformedDefinitionError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "MalformedDefinitionError";
+  }
+}
+
+class UndefinedDelimiterError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "UndefinedDelimiterError";
+  }
+}
+
+class DuplicateFieldError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "DuplicateFieldError";
+  }
+}
+
+class TypeMismatchError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "TypeMismatchError";
+  }
+}
+
+class MissingSeparatorError extends KDGError {
+  constructor(message) {
+    super(message);
+    this.name = "MissingSeparatorError";
+  }
+}
+
+const VALID_TYPES = new Set(["str", "int", "float", "bool", "date"]);
+
+// Characters that cannot be delimiters
+const RESERVED_CHARS = new Set(
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:" \t\n\r'.split(
+    ""
+  )
+);
+
+// Regex for parsing definition lines
+const DEFINITION_PATTERN = /^(str|int|float|bool|date):"((?:[^"\\]|\\.)*)\"(.)$/;
+
+/**
+ * Parse a single field definition line.
+ * @param {string} line - The definition line
+ * @param {number} lineNum - Line number for error reporting
+ * @returns {{type: string, label: string, delimiter: string}}
+ */
+function parseDefinition(line, lineNum) {
+  const match = line.match(DEFINITION_PATTERN);
+  if (!match) {
+    throw new MalformedDefinitionError(
+      `Invalid definition syntax: "${line}"`,
+      lineNum
+    );
+  }
+
+  const [, typeName, rawLabel, delimiter] = match;
+
+  if (!VALID_TYPES.has(typeName)) {
+    throw new InvalidTypeError(`Unknown type: "${typeName}"`, lineNum);
+  }
+
+  if (RESERVED_CHARS.has(delimiter)) {
+    throw new MalformedDefinitionError(
+      `Invalid delimiter: "${delimiter}" (reserved character)`,
+      lineNum
+    );
+  }
+
+  // Unescape the label
+  const label = rawLabel.replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+
+  return { type: typeName, label, delimiter };
+}
+
+/**
+ * Convert a string value to its typed representation.
+ * @param {string} value - The raw string value
+ * @param {string} typeName - The declared type
+ * @param {number} lineNum - Line number for error reporting
+ * @returns {*} The converted value
+ */
+function convertValue(value, typeName, lineNum) {
+  if (typeName === "str") {
+    return value;
+  }
+
+  if (typeName === "int") {
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed) || !Number.isInteger(parsed)) {
+      throw new TypeMismatchError(`Invalid integer: "${value}"`, lineNum);
+    }
+    return parsed;
+  }
+
+  if (typeName === "float") {
+    const parsed = parseFloat(value);
+    if (isNaN(parsed)) {
+      throw new TypeMismatchError(`Invalid float: "${value}"`, lineNum);
+    }
+    return parsed;
+  }
+
+  if (typeName === "bool") {
+    const lower = value.toLowerCase();
+    if (lower === "true" || lower === "1") {
+      return true;
+    }
+    if (lower === "false" || lower === "0") {
+      return false;
+    }
+    throw new TypeMismatchError(`Invalid boolean: "${value}"`, lineNum);
+  }
+
+  if (typeName === "date") {
+    const parts = value.split("-");
+    if (parts.length !== 3) {
+      throw new TypeMismatchError(
+        `Invalid date (expected YYYY-MM-DD): "${value}"`,
+        lineNum
+      );
+    }
+
+    const [year, month, day] = parts.map(Number);
+    const dateObj = new Date(year, month - 1, day);
+
+    if (
+      isNaN(dateObj.getTime()) ||
+      dateObj.getFullYear() !== year ||
+      dateObj.getMonth() !== month - 1 ||
+      dateObj.getDate() !== day
+    ) {
+      throw new TypeMismatchError(
+        `Invalid date (expected YYYY-MM-DD): "${value}"`,
+        lineNum
+      );
+    }
+
+    return value; // Return as string for JSON compatibility
+  }
+
+  throw new InvalidTypeError(`Unknown type: "${typeName}"`, lineNum);
+}
+
+/**
+ * Parse a single record line into an object.
+ * @param {string} line - The record line
+ * @param {Map<string, {type: string, label: string}>} delimiterMap
+ * @param {number} lineNum - Line number for error reporting
+ * @returns {Object}
+ */
+function parseRecord(line, delimiterMap, lineNum) {
+  if (!line) {
+    return {};
+  }
+
+  const record = {};
+  let position = 0;
+
+  while (position < line.length) {
+    const delimiter = line[position];
+
+    if (!delimiterMap.has(delimiter)) {
+      throw new UndefinedDelimiterError(
+        `Undefined delimiter: "${delimiter}"`,
+        lineNum
+      );
+    }
+
+    const fieldDef = delimiterMap.get(delimiter);
+
+    if (record.hasOwnProperty(fieldDef.label)) {
+      throw new DuplicateFieldError(
+        `Duplicate field in record: "${fieldDef.label}"`,
+        lineNum
+      );
+    }
+
+    // Find the end of this field's value
+    let end = line.length;
+    for (let i = position + 1; i < line.length; i++) {
+      if (delimiterMap.has(line[i])) {
+        end = i;
+        break;
+      }
+    }
+
+    const value = line.slice(position + 1, end);
+    record[fieldDef.label] = convertValue(value, fieldDef.type, lineNum);
+    position = end;
+  }
+
+  return record;
+}
+
+/**
+ * Parse a KDG document into a list of records.
+ * @param {string} content - The full KDG document
+ * @returns {Object[]} Array of record objects
+ */
+function parse(content) {
+  const lines = content.replace(/\r\n/g, "\n").split("\n");
+
+  // Find the separator (blank line)
+  let separatorIdx = null;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i] === "") {
+      separatorIdx = i;
+      break;
+    }
+  }
+
+  if (separatorIdx === null) {
+    throw new MissingSeparatorError(
+      "No blank line separator found between definitions and data"
+    );
+  }
+
+  // Parse definitions
+  const delimiterMap = new Map();
+  for (let i = 0; i < separatorIdx; i++) {
+    const line = lines[i];
+    if (!line) continue; // Skip empty lines
+
+    const fieldDef = parseDefinition(line, i + 1);
+
+    if (delimiterMap.has(fieldDef.delimiter)) {
+      const existing = delimiterMap.get(fieldDef.delimiter);
+      throw new DuplicateDelimiterError(
+        `Delimiter "${fieldDef.delimiter}" already used for field "${existing.label}"`,
+        i + 1
+      );
+    }
+
+    delimiterMap.set(fieldDef.delimiter, fieldDef);
+  }
+
+  // Parse records
+  const records = [];
+  for (let i = separatorIdx + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line) continue; // Skip empty lines
+
+    const record = parseRecord(line, delimiterMap, i + 1);
+    records.push(record);
+  }
+
+  return records;
+}
+
+/**
+ * Validate a KDG document.
+ * @param {string} content - The full KDG document
+ * @returns {{valid: boolean, error: string|null}}
+ */
+function validate(content) {
+  try {
+    parse(content);
+    return { valid: true, error: null };
+  } catch (e) {
+    if (e instanceof KDGError) {
+      return { valid: false, error: e.message };
+    }
+    throw e;
+  }
+}
+
+/**
+ * Convert parsed records to JSON string.
+ * @param {Object[]} records
+ * @param {number} indent
+ * @returns {string}
+ */
+function toJSON(records, indent = 2) {
+  return JSON.stringify(records, null, indent);
+}
+
+/**
+ * Convert parsed records to CSV string.
+ * @param {Object[]} records
+ * @returns {string}
+ */
+function toCSV(records) {
+  if (!records.length) {
+    return "";
+  }
+
+  // Get all unique keys across all records
+  const allKeys = [];
+  const seen = new Set();
+  for (const record of records) {
+    for (const key of Object.keys(record)) {
+      if (!seen.has(key)) {
+        allKeys.push(key);
+        seen.add(key);
+      }
+    }
+  }
+
+  // Build CSV
+  const escapeCSV = (value) => {
+    const s = value != null ? String(value) : "";
+    if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+
+  const lines = [allKeys.map(escapeCSV).join(",")];
+  for (const record of records) {
+    const row = allKeys.map((k) => escapeCSV(record[k]));
+    lines.push(row.join(","));
+  }
+
+  return lines.join("\n");
+}
+
+/**
+ * CLI entry point.
+ */
+function main() {
+  const args = process.argv.slice(2);
+
+  if (args.length < 2) {
+    console.log(`KDG Parser - Reference Implementation
+
+Usage:
+  node kdg.js parse <file>           Parse KDG to JSON
+  node kdg.js validate <file>        Validate KDG syntax
+  node kdg.js convert <file> [fmt]   Convert to format (json, csv)`);
+    process.exit(1);
+  }
+
+  const [command, filepath] = args;
+  let content;
+
+  try {
+    content = fs.readFileSync(filepath, "utf-8");
+  } catch (e) {
+    if (e.code === "ENOENT") {
+      console.error(`Error: File not found: ${filepath}`);
+    } else {
+      console.error(`Error reading file: ${e.message}`);
+    }
+    process.exit(1);
+  }
+
+  switch (command) {
+    case "parse":
+      try {
+        const records = parse(content);
+        console.log(toJSON(records));
+      } catch (e) {
+        if (e instanceof KDGError) {
+          console.error(`Parse error: ${e.message}`);
+          process.exit(1);
+        }
+        throw e;
+      }
+      break;
+
+    case "validate":
+      const { valid, error } = validate(content);
+      if (valid) {
+        console.log("Valid KDG document");
+      } else {
+        console.error(`Invalid: ${error}`);
+        process.exit(1);
+      }
+      break;
+
+    case "convert":
+      const fmt = args[2] || "json";
+      try {
+        const records = parse(content);
+        if (fmt === "json") {
+          console.log(toJSON(records));
+        } else if (fmt === "csv") {
+          console.log(toCSV(records));
+        } else {
+          console.error(`Unknown format: ${fmt}`);
+          process.exit(1);
+        }
+      } catch (e) {
+        if (e instanceof KDGError) {
+          console.error(`Parse error: ${e.message}`);
+          process.exit(1);
+        }
+        throw e;
+      }
+      break;
+
+    default:
+      console.error(`Unknown command: ${command}`);
+      console.log(`
+Usage:
+  node kdg.js parse <file>           Parse KDG to JSON
+  node kdg.js validate <file>        Validate KDG syntax
+  node kdg.js convert <file> [fmt]   Convert to format (json, csv)`);
+      process.exit(1);
+  }
+}
+
+// Export for use as module
+module.exports = {
+  parse,
+  validate,
+  toJSON,
+  toCSV,
+  KDGError,
+  DuplicateDelimiterError,
+  InvalidTypeError,
+  MalformedDefinitionError,
+  UndefinedDelimiterError,
+  DuplicateFieldError,
+  TypeMismatchError,
+  MissingSeparatorError,
+};
+
+// Run CLI if executed directly
+if (require.main === module) {
+  main();
+}

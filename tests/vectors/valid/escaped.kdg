@@ -1,0 +1,5 @@
+str:"user\"s name"@
+str:"path\\to\\file"#
+
+Alice@C:\Users\Alice#
+Bob@/home/bob#

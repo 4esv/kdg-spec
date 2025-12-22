@@ -1,0 +1,14 @@
+str:"sku"@
+str:"name"~
+int:"quantity"#
+float:"price"$
+bool:"in_stock"!
+str:"category"|
+
+WDG-001@Widget Standard~150#12.99$true!widgets|
+WDG-002@Widget Deluxe~45#24.99$true!widgets|
+WDG-003@Widget Mini~0#8.99$false!widgets|
+GAD-001@Gadget Pro~78#49.99$true!gadgets|
+GAD-002@Gadget Lite~234#29.99$true!gadgets|
+ACC-001@Accessory Pack~500#5.99$true!accessories|
+ACC-002@Premium Cable~0#14.99$false!accessories|

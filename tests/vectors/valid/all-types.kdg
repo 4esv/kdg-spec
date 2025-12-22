@@ -1,0 +1,8 @@
+str:"name"@
+int:"age"#
+float:"score"%
+bool:"active"!
+date:"joined"/
+
+Bob@30#95.5%true!2024-01-15/
+Carol@25#87.3%false!2023-06-20/

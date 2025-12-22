@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Bob",
+    "age": 30,
+    "score": 95.5,
+    "active": true,
+    "joined": "2024-01-15"
+  },
+  {
+    "name": "Carol",
+    "age": 25,
+    "score": 87.3,
+    "active": false,
+    "joined": "2023-06-20"
+  }
+]

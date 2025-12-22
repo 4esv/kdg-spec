@@ -1,0 +1,12 @@
+str:"key"^
+str:"value"~
+str:"type"|
+bool:"required"!
+
+app_name^My Application~string|true!
+debug_mode^false~boolean|false!
+max_connections^100~integer|true!
+api_timeout^30.0~float|true!
+log_level^info~string|false!
+feature_flags^alpha,beta,gamma~list|false!
+admin_email^admin@example.com~string|true!

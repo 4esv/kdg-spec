@@ -101,21 +101,23 @@ value1delimiter1value2delimiter2value3delimiter3
 ### 3.1 EBNF Grammar
 
 ```ebnf
-document      = definitions , separator , records ;
-definitions   = definition , { newline , definition } ;
-definition    = type , ":" , quoted_label , delimiter ;
-type          = "str" | "int" | "float" | "bool" | "date" ;
-quoted_label  = '"' , label_chars , '"' ;
-label_chars   = { any_char - '"' | '\"' } ;
-delimiter     = visible_char - (alphanumeric | '"' | ':') ;
-separator     = newline , newline ;
-records       = [ record , { newline , record } ] ;
-record        = field , { field } ;
-field         = value , delimiter ;
-value         = { any_char - defined_delimiter } ;
-newline       = LF | CRLF ;
-visible_char  = ? any printable ASCII or Unicode character ? ;
-alphanumeric  = "a"-"z" | "A"-"Z" | "0"-"9" ;
+document       = definitions , separator , records ;
+definitions    = definition , { newline , definition } ;
+definition     = type , ":" , quoted_label , delimiter ;
+type           = "str" | "int" | "float" | "bool" | "date" ;
+quoted_label   = '"' , label_chars , '"' ;
+label_chars    = { any_char - '"' | '\"' } ;
+delimiter      = visible_char - (alphanumeric | '"' | ':') ;
+separator      = newline , newline ;
+records        = [ record , { newline , record } ] ;
+record         = field , { field } ;
+field          = value , delimiter ;
+value          = raw_value | wrapped_value ;
+raw_value      = { any_char - defined_delimiter } ;
+wrapped_value  = '"' , { any_char - '"' | '\"' } , '"' ;
+newline        = LF | CRLF ;
+visible_char   = ? any printable ASCII or Unicode character ? ;
+alphanumeric   = "a"-"z" | "A"-"Z" | "0"-"9" ;
 ```
 
 ### 3.2 Lexical Rules
@@ -125,8 +127,10 @@ alphanumeric  = "a"-"z" | "A"-"Z" | "0"-"9" ;
 3. **Delimiters** MUST be unique within a document
 4. **Labels** MUST be enclosed in double quotes
 5. **Labels** MAY contain escaped quotes (`\"`)
-6. **Records** MUST NOT contain undefined delimiters at field-terminating positions
-7. **Empty lines** in the data block are ignored
+6. **Values** MAY be wrapped in double quotes
+7. **Wrapped values** MAY contain delimiter characters
+8. **Records** MUST NOT contain undefined delimiters at field-terminating positions
+9. **Empty lines** in the data block are ignored
 
 ### 3.3 Reserved Characters
 
@@ -284,9 +288,24 @@ Within quoted labels, the following escape sequences are supported:
 
 ### 6.2 In Values
 
-Values do not support escape sequences. To include a delimiter character within a value, choose a different delimiter for that field.
+Values MAY be wrapped in double quotes. Wrapping is optional but required when a value contains a delimiter character.
 
-This is a deliberate design decision: it keeps the parser simple and encourages thoughtful delimiter selection.
+```
+str:"name"@
+str:"note"#
+
+Alice@"Contains @ symbol"#
+Bob@No wrapping needed#
+```
+
+Within wrapped values, the following escape sequences are supported:
+
+| Sequence | Meaning |
+|----------|---------|
+| `\"` | Literal double quote |
+| `\\` | Literal backslash |
+
+Unwrapped values do not support escape sequences.
 
 ---
 

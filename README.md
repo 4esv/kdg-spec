@@ -63,7 +63,7 @@ Alice@30#
 
 Both records are valid. Order is irrelevant. The parser identifies fields by their trailing delimiter, not position.
 
-This means you cannot use a delimiter character inside a value. If your data contains `@` symbols, do not use `@` as a delimiter. This is by design. The design has trade-offs.
+An unwrapped delimiter cannot appear inside a value. To include a delimiter in a value, wrap the value in double quotes (like CSV). Wrapping is optional.
 
 ---
 

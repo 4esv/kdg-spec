@@ -8,7 +8,7 @@
 
 ## Overview
 
-KDG is a text-based data serialization format. It is not JSON. It is not CSV. It is the other one.
+KDG is a text-based data serialization format. It is not JSON. It is not CSV. It's the other one.
 
 ```kdg
 str:"name"@
@@ -18,13 +18,10 @@ Alice@30#
 Bob@25#
 ```
 
-The delimiter *is* the key. When the parser sees `@`, it knows the preceding value was the name. When it sees `#`, that was the age. This is either elegant or unnecessary, depending on who you ask.
+The delimiter *is* the key. When the parser sees `@`, it knows the preceding value was the name. 
+When it sees `#`, that was the age.
 
----
-
-## Installation
-
-There is nothing to install. This is a specification.
+This is either elegant or unnecessary, depending on who you ask.
 
 ---
 
@@ -34,8 +31,6 @@ There is nothing to install. This is a specification.
 python implementations/kdg.py parse file.kdg
 node implementations/kdg.js validate file.kdg
 ```
-
-Both commands do the same thing. We wrote it twice to be sure.
 
 ---
 
@@ -49,7 +44,12 @@ A KDG document has two parts: definitions, then data, separated by one blank lin
 type:"label"delimiter
 ```
 
-The delimiter can be any non-alphanumeric character except `"` and `:`. It becomes the suffix that identifies that field's values. Some people use `@` for names. Some use `$` for prices. The specification has no opinion on this.
+The delimiter can be any non-alphanumeric character except `"` and `:`. 
+It becomes the suffix that identifies that field's values. 
+
+Some people use `@` for names. Some use `$` for prices.
+
+The specification has no opinion on this, who are we to judge?
 
 ### Data
 
@@ -89,7 +89,9 @@ There are five types.
 | JSON   | Explicit keys | Flexible. Verbose. |
 | KDG    | Delimiter | Different. |
 
-KDG occupies a specific point in the design space. Whether that point needed occupying is left as an exercise for the reader.
+KDG occupies a specific point in the design space. 
+
+Whether that point needed occupying is left as an exercise for the reader.
 
 ---
 

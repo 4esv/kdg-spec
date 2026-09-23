@@ -1,6 +1,6 @@
 # KDG
 
-**Key-Delimited Garbage** — The second-best format you'll ever need.
+**Key-Delimited Garbage**. The second-best format you'll ever need.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -49,7 +49,7 @@ It becomes the suffix that identifies that field's values.
 
 Some people use `@` for names. Some use `$` for prices.
 
-The specification has no opinion on this, who are we to judge?
+The specification has no opinion on this. Who are we to judge?
 
 ### Data
 

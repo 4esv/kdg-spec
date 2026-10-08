@@ -149,7 +149,7 @@ While any valid delimiter works, these are recommended for readability:
 
 | Delimiter | Suggested Use |
 |-----------|---------------|
-| `@` | Identifiers, emails |
+| `@` | Identifiers, usernames |
 | `#` | Numeric IDs, counts |
 | `$` | Currency, amounts |
 | `%` | Percentages, ratios |
@@ -497,6 +497,7 @@ File extension: `.kdg`
 Reference implementations are provided in:
 - Python: `implementations/kdg.py`
 - JavaScript: `implementations/kdg.js`
+- Go: `implementations/kdg.go`
 
 These implementations are normative for ambiguous cases not covered by this specification.
 

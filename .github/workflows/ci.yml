@@ -15,7 +15,7 @@ jobs:
           python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25"
@@ -25,8 +25,50 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: "4.4"
-      - name: Install build tools
-        run: sudo apt-get update && sudo apt-get install -y build-essential
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1"
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          elixir-version: "1.18"
+      - name: Install apt toolchains
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential lua5.4 tcl
+          sudo ln -sf /usr/bin/lua5.4 /usr/local/bin/lua
+      - name: Install Kotlin
+        run: |
+          base="https://github.com/JetBrains/kotlin/releases/download"
+          ver="v2.2.20"
+          curl -sSL "$base/$ver/kotlin-compiler-$ver.zip" -o /tmp/kotlin.zip
+          sudo mkdir -p /opt/kotlin
+          sudo unzip -q /tmp/kotlin.zip -d /opt/kotlin
+          echo "/opt/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
+      - name: Install Dart
+        run: |
+          base="https://storage.googleapis.com/dart-archive"
+          path="/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip"
+          curl -sSL "$base$path" -o /tmp/dart.zip
+          sudo mkdir -p /opt/dart
+          sudo unzip -q /tmp/dart.zip -d /opt/dart
+          echo "/opt/dart/dart-sdk/bin" >> "$GITHUB_PATH"
+      - name: Install Swift
+        run: |
+          base="https://download.swift.org/swift-6.1-release/ubuntu2404"
+          path="/swift-6.1-RELEASE/swift-6.1-RELEASE-ubuntu24.04.tar.gz"
+          curl -sSL "$base$path" -o /tmp/swift.tgz
+          sudo mkdir -p /opt/swift
+          sudo tar -xzf /tmp/swift.tgz -C /opt/swift --strip-components=1
+          echo "/opt/swift/usr/bin" >> "$GITHUB_PATH"
       - name: Install PowerShell
         env:
           PWSH_VERSION: 7.4.6

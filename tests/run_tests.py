@@ -21,7 +21,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 IMPL_DIR = ROOT / "implementations"
-C_BINARY = Path(tempfile.gettempdir()) / "kdg-c"
+TMP = Path(tempfile.gettempdir())
+
+C_BINARY = TMP / "kdg-c"
+CPP_BINARY = TMP / "kdg-cpp"
+RS_BINARY = TMP / "kdg-rs"
+KT_BINARY = TMP / "kdg.jar"
+SWIFT_BINARY = TMP / "kdg-swift"
 
 # Each entry: (name, run_prefix, build_command_or_None).
 # run_prefix is a list; the harness appends [subcommand, file] to it.
@@ -38,6 +44,21 @@ IMPL_SPECS = [
     ("r", ["Rscript", str(IMPL_DIR / "kdg.R")], None),
     ("bqn", ["bqn", str(IMPL_DIR / "kdg.bqn")], None),
     ("c", [str(C_BINARY)], ["cc", "-O2", "-o", str(C_BINARY), str(IMPL_DIR / "kdg.c")]),
+    ("cpp", [str(CPP_BINARY)], ["g++", "-O2", "-std=c++17", "-o", str(CPP_BINARY), str(IMPL_DIR / "kdg.cpp")]),
+    ("rust", [str(RS_BINARY)], ["rustc", "-O", "-o", str(RS_BINARY), str(IMPL_DIR / "kdg.rs")]),
+    ("typescript", ["node", str(IMPL_DIR / "kdg.ts")], None),
+    ("java", ["java", str(IMPL_DIR / "kdg.java")], None),
+    ("kotlin", ["java", "-jar", str(KT_BINARY)], ["kotlinc", str(IMPL_DIR / "kdg.kt"), "-include-runtime", "-d", str(KT_BINARY)]),
+    ("csharp", ["dotnet", "run", str(IMPL_DIR / "kdg.cs"), "--"], None),
+    ("erlang", ["escript", str(IMPL_DIR / "kdg.erl")], None),
+    ("elixir", ["elixir", str(IMPL_DIR / "kdg.exs")], None),
+    ("ruby", ["ruby", str(IMPL_DIR / "kdg.rb")], None),
+    ("perl", ["perl", str(IMPL_DIR / "kdg.pl")], None),
+    ("lua", ["lua", str(IMPL_DIR / "kdg.lua")], None),
+    ("swift", [str(SWIFT_BINARY)], ["swiftc", "-O", "-o", str(SWIFT_BINARY), str(IMPL_DIR / "kdg.swift")]),
+    ("dart", ["dart", str(IMPL_DIR / "kdg.dart")], None),
+    ("julia", ["julia", str(IMPL_DIR / "kdg.jl")], None),
+    ("tcl", ["tclsh", str(IMPL_DIR / "kdg.tcl")], None),
 ]
 
 VALID_DIR = ROOT / "tests" / "vectors" / "valid"

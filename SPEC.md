@@ -9,7 +9,7 @@
 | **Date** | 2026-10-08 |
 | **Media type** | `text/x-kdg` |
 | **File extension** | `.kdg` |
-| **Reference implementations** | 9 (see [Appendix A](#appendix-a-reference-implementations)) |
+| **Reference implementations** | 24 (see [Appendix A](#appendix-a-reference-implementations)) |
 
 
 
@@ -321,7 +321,7 @@ Accepts a signed integer: an optional `-`, then one or more digits. Leading zero
 
 ### 4.4 float
 
-Accepts standard notation (`3.14`, `-2.5`), integer notation (`42`, coerced to `42.0`), and a leading decimal (`.5`, coerced to `0.5`). Scientific notation is **not** supported in this version.
+Accepts standard notation (`3.14`, `-2.5`), integer notation (`42`, coerced to `42.0`), a leading decimal (`.5`, coerced to `0.5`), and scientific notation (`1e3`, coerced to `1000.0`). Values outside this grammar (special values such as `Inf` and `NaN`, hex floats, and other native-parser extensions) are implementation-defined and MUST NOT appear in conforming documents.
 
 | Input | Result |
 |-------|--------|
@@ -329,7 +329,7 @@ Accepts standard notation (`3.14`, `-2.5`), integer notation (`42`, coerced to `
 | `-2.5` | `-2.5` |
 | `42` | `42.0` |
 | `.5` | `0.5` |
-| `1e3` | `TypeMismatch` |
+| `1e3` | `1000.0` |
 
 ### 4.5 bool
 
@@ -724,15 +724,35 @@ The following implementations are normative for ambiguous cases not covered by t
 | JavaScript | `implementations/kdg.js` | `node implementations/kdg.js parse <file>` |
 | Go | `implementations/kdg.go` | `go run implementations/kdg.go parse <file>` |
 | C | `implementations/kdg.c` | `cc implementations/kdg.c && ./a.out parse <file>` |
+| C++ | `implementations/kdg.cpp` | `g++ -std=c++17 implementations/kdg.cpp && ./a.out parse <file>` |
+| Rust | `implementations/kdg.rs` | `rustc implementations/kdg.rs && ./kdg parse <file>` |
+| TypeScript | `implementations/kdg.ts` | `node implementations/kdg.ts parse <file>` |
+| Java | `implementations/kdg.java` | `java implementations/kdg.java parse <file>` |
+| Kotlin | `implementations/kdg.kt` | `kotlinc implementations/kdg.kt -include-runtime -d kdg.jar && java -jar kdg.jar parse <file>` |
+| C# | `implementations/kdg.cs` | `dotnet run implementations/kdg.cs -- parse <file>` |
 | Bash | `implementations/kdg.sh` | `bash implementations/kdg.sh parse <file>` |
 | Haskell | `implementations/kdg.hs` | `runghc implementations/kdg.hs parse <file>` |
 | PowerShell | `implementations/kdg.ps1` | `pwsh -File implementations/kdg.ps1 parse <file>` |
 | R | `implementations/kdg.R` | `Rscript implementations/kdg.R parse <file>` |
 | BQN | `implementations/kdg.bqn` | `bqn implementations/kdg.bqn parse <file>` |
+| Erlang | `implementations/kdg.erl` | `escript implementations/kdg.erl parse <file>` |
+| Elixir | `implementations/kdg.exs` | `elixir implementations/kdg.exs parse <file>` |
+| Ruby | `implementations/kdg.rb` | `ruby implementations/kdg.rb parse <file>` |
+| Perl | `implementations/kdg.pl` | `perl implementations/kdg.pl parse <file>` |
+| Lua | `implementations/kdg.lua` | `lua implementations/kdg.lua parse <file>` |
+| Swift | `implementations/kdg.swift` | `swift implementations/kdg.swift parse <file>` |
+| Dart | `implementations/kdg.dart` | `dart implementations/kdg.dart parse <file>` |
+| Julia | `implementations/kdg.jl` | `julia implementations/kdg.jl parse <file>` |
+| Tcl | `implementations/kdg.tcl` | `tclsh implementations/kdg.tcl parse <file>` |
 
 ---
 
 ## Appendix B: Changelog
+
+### 1.2.0 (2026-10-08)
+
+- Added fifteen reference implementations (C++, Rust, TypeScript, Java, Kotlin, C#, Erlang, Elixir, Ruby, Perl, Lua, Swift, Dart, Julia, Tcl), for twenty-four total.
+- Clarified float syntax: scientific notation is accepted; special values and native-parser extensions are implementation-defined.
 
 ### 1.1.0 (2026-10-08)
 

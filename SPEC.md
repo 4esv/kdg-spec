@@ -1,4 +1,4 @@
-# KDG — Key-Delimited Garbage
+# KDG: Key-Delimited Garbage
 
 **Format Specification**
 
@@ -11,7 +11,7 @@
 | **File extension** | `.kdg` |
 | **Reference implementations** | 9 (see [Appendix A](#appendix-a-reference-implementations)) |
 
-> *"JSON too verbose? CSV too fragile? We don't have a solution — but we have KDG."*
+
 
 ---
 
@@ -33,7 +33,7 @@ The parser reads a value, sees the `@`, and knows the value was a *name*; sees t
 
 This document is the normative specification: the grammar, type system, parsing algorithm, error taxonomy, test vectors, conformance requirements, and security considerations.
 
-**Related documents:** [PHILOSOPHY.md](./PHILOSOPHY.md) — a brand report on the position of the delimiter in the universe.
+**Related documents:** [PHILOSOPHY.md](./PHILOSOPHY.md), the design rationale.
 
 ---
 
@@ -63,8 +63,8 @@ Text serialization formats have, for decades, offered a binary choice:
 
 | Format | Field identity | Cost |
 |--------|----------------|------|
-| CSV | Column position | Fragile — reorder a column and every consumer breaks |
-| JSON | Repeated explicit keys | Verbose — the same key is restated on every single record |
+| CSV | Column position | Fragile; reorder a column and every consumer breaks |
+| JSON | Repeated explicit keys | Verbose; the same key is restated on every single record |
 | XML | Explicit tags | Most verbose of all |
 | KDG | The delimiter | Compact **and** order-independent |
 
@@ -72,34 +72,34 @@ CSV pays for compactness with positional fragility. JSON pays for order-independ
 
 ### 1.2 Design Goals
 
-1. **Order independence** — records may list fields in any order.
-2. **Compactness** — field names appear once (in the schema), never per record.
-3. **Human readability** — plain text, inspectable with `cat` or `less`.
-4. **Type safety** — types are declared once in the schema and enforced per value.
-5. **Simplicity** — the whole grammar fits on one page; a parser fits in one file.
-6. **Zero dependencies** — every reference implementation uses only its language's standard library.
+1. **Order independence**: records may list fields in any order.
+2. **Compactness**: field names appear once (in the schema), never per record.
+3. **Human readability**: plain text, inspectable with `cat` or `less`.
+4. **Type safety**: types are declared once in the schema and enforced per value.
+5. **Simplicity**: the whole grammar fits on one page; a parser fits in one file.
+6. **Zero dependencies**: every reference implementation uses only its language's standard library.
 
 ### 1.3 Non-Goals
 
 The following are explicitly **out of scope** and will not be added:
 
-- **Nesting** — records are flat. There is no object/array tree. If you need nesting, you need JSON, and you already have it.
-- **Streaming records** — a document is read whole. Records are newline-terminated, so a line-oriented reader *can* stream, but the schema must be seen first.
-- **Schema evolution/migration** — KDG describes data; it does not describe how data changes over time.
-- **Binary encoding** — KDG is text. Binary formats solve a different problem.
-- **Self-describing data** — a KDG document is only meaningful against its definition block. It is a schema-first format by design.
+- **Nesting**: records are flat. There is no object/array tree. If you need nesting, you need JSON, and you already have it.
+- **Streaming records**: a document is read whole. Records are newline-terminated, so a line-oriented reader *can* stream, but the schema must be seen first.
+- **Schema evolution/migration**: KDG describes data; it does not describe how data changes over time.
+- **Binary encoding**: KDG is text. Binary formats solve a different problem.
+- **Self-describing data**: a KDG document is only meaningful against its definition block. It is a schema-first format by design.
 
 ### 1.4 Design Rationale
 
 **Why delimiters, and not anything else?** A record must separate fields somehow, and that separator is wasted information in every existing format. The design space of "how to identify a field" is small:
 
-- **Position** (CSV) — implicit, fragile, zero per-record cost.
-- **Explicit key** (JSON) — self-describing, verbose, per-record cost.
-- **Fixed schema + separator** (KDG) — explicit *once*, per-record cost of one character.
+- **Position** (CSV): implicit, fragile, zero per-record cost.
+- **Explicit key** (JSON): self-describing, verbose, per-record cost.
+- **Fixed schema + separator** (KDG): explicit *once*, per-record cost of one character.
 
 KDG picks the third. The delimiter is a one-character key that is declared once and reused thereafter.
 
-**Why single-character delimiters?** Because a record is then trivially scannable: a parser never needs lookahead, backtracking, or a lexer state machine beyond "am I inside quotes?". The trade-off is a finite namespace — which is why the delimiter rules (Section 3) are conservative about what may be used.
+**Why single-character delimiters?** Because a record is then trivially scannable: a parser never needs lookahead, backtracking, or a lexer state machine beyond "am I inside quotes?". The trade-off is a finite namespace, which is why the delimiter rules (Section 3) are conservative about what may be used.
 
 **Why these five types?** `str`, `int`, `float`, `bool`, `date` cover the overwhelmingly common case of tabular/record data without inviting the complexity of a full type algebra. A type's *name* is part of the schema; a type's *values* are validated against it (Section 4).
 
@@ -129,7 +129,7 @@ A KDG document is exactly two sections separated by exactly one blank line.
         │              DEFINITION BLOCK               │
         │  one field per line:  type:"label"delimiter  │
         ├─────────────────────────────────────────────┤
-        │          (one blank line — separator)        │
+        │          (one blank line: separator)        │
         ├─────────────────────────────────────────────┤
         │                 DATA BLOCK                  │
         │   one record per line:  valueDvalueDvalueD   │
@@ -145,7 +145,7 @@ flowchart TB
         A["definition line<br/><code>type:&quot;label&quot;delimiter</code>"]
         B["definition line"]
         C["… more definitions …"]
-        D["blank line — section separator"]
+        D["blank line, the section separator"]
         E["record line<br/><code>valueDvalueDvalueD</code>"]
         F["… more records …"]
     end
@@ -160,9 +160,9 @@ The definition block declares fields. Each line declares exactly one field:
 type:"label"delimiter
 ```
 
-- **`type`** — one of `str`, `int`, `float`, `bool`, `date` (Section 4).
-- **`label`** — a human-readable field name, enclosed in double quotes.
-- **`delimiter`** — a single character that identifies this field in records.
+- **`type`**: one of `str`, `int`, `float`, `bool`, `date` (Section 4).
+- **`label`**: a human-readable field name, enclosed in double quotes.
+- **`delimiter`**: a single character that identifies this field in records.
 
 Example:
 
@@ -174,7 +174,7 @@ bool:"active"!
 
 ### 2.2 Section Separator
 
-A single blank line — an empty line containing only a newline — separates the definition block from the data block. It is required; its absence is an error (`MissingSeparator`, Section 7.1).
+A single blank line, an empty line containing only a newline, separates the definition block from the data block. It is required; its absence is an error (`MissingSeparator`, Section 7.1).
 
 ### 2.3 Data Block
 
@@ -223,7 +223,7 @@ Notes on the grammar:
 
 - A **raw value** may contain any character *except* a defined delimiter; the first defined delimiter encountered terminates it.
 - A **wrapped value** is enclosed in double quotes and may contain anything, including delimiters; the terminating delimiter follows the closing quote.
-- The grammar is **LL(1)**: the parser never backtracks. This is a deliberate property, not an accident — it is what makes a correct implementation fit in one page of any language.
+- The grammar is **LL(1)**: the parser never backtracks. This is a deliberate property, not an accident; it is what makes a correct implementation fit in one page of any language.
 
 ### 3.2 Syntax Overview
 
@@ -256,7 +256,7 @@ The following characters cannot be used as delimiters:
 | `a`–`z`, `A`–`Z`, `0`–`9` | Reserved for values |
 | `:` | Separates type and label in a definition |
 | `"` | Quotes labels and wrapped values |
-| Space, tab, newline | Whitespace — delimiters must be visible |
+| Space, tab, newline | Whitespace; delimiters must be visible |
 
 ### 3.5 Recommended Delimiters
 
@@ -410,7 +410,7 @@ label = raw_label.replace('\\"', '"').replace("\\\\", "\\")
 
 ### 5.3 Record Parsing
 
-Each record line is scanned left to right. A field is **value, then delimiter** — never the reverse.
+Each record line is scanned left to right. A field is **value, then delimiter**, never the reverse.
 
 ```python
 fields = {}
@@ -483,7 +483,7 @@ Bob@no wrapping needed#
 | `\"` | Literal double quote |
 | `\\` | Literal backslash |
 
-Unwrapped values do not support escape sequences — a backslash in an unwrapped value is literal.
+Unwrapped values do not support escape sequences; a backslash in an unwrapped value is literal.
 
 ---
 
@@ -681,8 +681,8 @@ The test harness (`tests/run_tests.py`) executes the conformance suite against e
 Parsers MUST validate input to prevent:
 
 - **Resource exhaustion** from extremely large documents (the format is flat, so there is no recursion or nesting to exploit).
-- **Line-length abuse** — a single record line of unbounded length. Implementations SHOULD support a configurable maximum input size.
-- **Invalid UTF-8** — implementations SHOULD reject malformed byte sequences rather than propagate them into output.
+- **Line-length abuse**: a single record line of unbounded length. Implementations SHOULD support a configurable maximum input size.
+- **Invalid UTF-8**: implementations SHOULD reject malformed byte sequences rather than propagate them into output.
 
 ### 10.2 Output Encoding
 

@@ -132,13 +132,18 @@ kdg-spec/
 ├── SPEC.md
 ├── CONTRIBUTING.md
 ├── LICENSE
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── implementations/
 │   ├── kdg.py
 │   └── kdg.js
-├── tests/vectors/
-│   ├── valid/
-│   ├── invalid/
-│   └── expected/
+├── tests/
+│   ├── run_tests.py
+│   └── vectors/
+│       ├── valid/
+│       ├── invalid/
+│       └── expected/
 └── examples/
 ```
 

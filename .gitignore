@@ -75,3 +75,6 @@ temp/
 
 # Session-orchestrator state
 .orchestrator/
+
+# Pi agent state
+.pi/

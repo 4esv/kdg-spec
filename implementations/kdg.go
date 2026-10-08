@@ -152,7 +152,7 @@ func convertValue(value, typeName string, lineNum int) (interface{}, error) {
 			year, errY := strconv.Atoi(parts[0])
 			month, errM := strconv.Atoi(parts[1])
 			day, errD := strconv.Atoi(parts[2])
-			if errY == nil && errM == nil && errD == nil {
+			if errY == nil && errM == nil && errD == nil && year >= 1 && year <= 9999 {
 				// time.Date normalises out-of-range components, so the
 				// round-trip check rejects e.g. 2024-02-30.
 				t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)

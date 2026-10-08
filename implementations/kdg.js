@@ -172,14 +172,36 @@ function convertValue(value, typeName, lineNum) {
       );
     }
 
-    const [year, month, day] = parts.map(Number);
-    const dateObj = new Date(year, month - 1, day);
+    const year = Number(parts[0]);
+    const month = Number(parts[1]);
+    const day = Number(parts[2]);
 
     if (
-      isNaN(dateObj.getTime()) ||
-      dateObj.getFullYear() !== year ||
-      dateObj.getMonth() !== month - 1 ||
-      dateObj.getDate() !== day
+      !Number.isInteger(year) ||
+      !Number.isInteger(month) ||
+      !Number.isInteger(day) ||
+      year < 1 ||
+      year > 9999 ||
+      month < 1 ||
+      month > 12 ||
+      day < 1 ||
+      day > 31
+    ) {
+      throw new TypeMismatchError(
+        `Invalid date (expected YYYY-MM-DD): "${value}"`,
+        lineNum
+      );
+    }
+
+    // setUTCFullYear treats the year literally (no 1900 mapping for 0-99) and
+    // avoids local-timezone quirks; the round-trip check rejects 2023-02-29.
+    const dateObj = new Date(0);
+    dateObj.setUTCFullYear(year, month - 1, day);
+
+    if (
+      dateObj.getUTCFullYear() !== year ||
+      dateObj.getUTCMonth() !== month - 1 ||
+      dateObj.getUTCDate() !== day
     ) {
       throw new TypeMismatchError(
         `Invalid date (expected YYYY-MM-DD): "${value}"`,

@@ -1,9 +1,24 @@
 # KDG
 
-**Key-Delimited Garbage**. 
-The second-best data format you'll ever need.
+**KDG** is the stupid delimiter format, and the second-best data format you'll ever need.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## The Name
+
+KDG is a three-letter handle, pronounced "kay-dee-gee". The expansion is deliberately not fixed.
+
+The reference implementations have long spelled it "Key-Delimiter Grammar". The specification has spelled it "Key-Delimited Garbage". Both are correct, and this document declines to choose. Depending on your mood, KDG is:
+
+- **Key-Delimited Grammar**: the reading used in the specification. It is a grammar.
+- **Key-Delimited Garbage**: when it does not parse, or when you are being honest.
+- **Keyed Data Grid**: the tabular reading. Records are rows; delimiters are the grid lines.
+- **Keep Data Grounded**: the aspirational reading.
+- **Key-Delimiter Grammar**: the pedantic reading, which distinguishes the delimiter character from the format.
+
+As with the format itself, the interpretation is left to the reader.
 
 ---
 

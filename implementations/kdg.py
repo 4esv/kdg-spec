@@ -76,7 +76,7 @@ VALID_TYPES = frozenset({"str", "int", "float", "bool", "date"})
 RESERVED_CHARS = frozenset('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:" \t\n\r')
 
 # Regex for parsing definition lines
-DEFINITION_PATTERN = re.compile(r'^(str|int|float|bool|date):"((?:[^"\\]|\\.)*)\"(.)$')
+DEFINITION_PATTERN = re.compile(r'^([a-z]+):"((?:[^"\\]|\\.)*)\"(.)$')
 
 
 def parse_definition(line: str, line_num: int) -> FieldDef:

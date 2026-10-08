@@ -1,14 +1,14 @@
 [
   {
-    "greeting": "Hello",
-    "name": "World"
+    "greeting": "こんにちは",
+    "name": "田中"
   },
   {
-    "greeting": "Bonjour",
-    "name": "Marie"
+    "greeting": "Привет",
+    "name": "Мария"
   },
   {
-    "greeting": "Hola",
-    "name": "Carlos"
+    "greeting": "مرحبا",
+    "name": "أحمد"
   }
 ]

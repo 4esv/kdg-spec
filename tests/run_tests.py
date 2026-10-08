@@ -87,6 +87,38 @@ def check_example(path):
     return results
 
 
+def check_convert(vector_path):
+    expected_path = EXPECTED_DIR / (vector_path.stem + ".json")
+    if not expected_path.exists():
+        return []
+
+    expected = json.loads(expected_path.read_text(encoding="utf-8"))
+    results = []
+
+    for name, cmd in IMPLS:
+        proc = run(cmd + ["convert", str(vector_path), "json"])
+        if proc.returncode != 0:
+            results.append((name + " convert-json " + vector_path.name + ": exit " + str(proc.returncode) + ": " + proc.stderr.strip(), False))
+            continue
+        try:
+            actual = json.loads(proc.stdout)
+        except json.JSONDecodeError as exc:
+            results.append((name + " convert-json " + vector_path.name + ": invalid JSON: " + str(exc), False))
+            continue
+        if actual != expected:
+            results.append((name + " convert-json " + vector_path.name + ": output mismatch", False))
+        else:
+            results.append((name + " convert-json " + vector_path.name + ": ok", True))
+
+        proc_csv = run(cmd + ["convert", str(vector_path), "csv"])
+        if proc_csv.returncode != 0:
+            results.append((name + " convert-csv " + vector_path.name + ": exit " + str(proc_csv.returncode) + ": " + proc_csv.stderr.strip(), False))
+        else:
+            results.append((name + " convert-csv " + vector_path.name + ": ok", True))
+
+    return results
+
+
 def main():
     checks = []
 
@@ -98,6 +130,9 @@ def main():
 
     for path in sorted(EXAMPLES_DIR.glob("*.kdg")):
         checks.extend(check_example(path))
+
+    for path in sorted(VALID_DIR.glob("*.kdg")):
+        checks.extend(check_convert(path))
 
     failed = [msg for msg, ok in checks if not ok]
     passed = sum(1 for _, ok in checks if ok)

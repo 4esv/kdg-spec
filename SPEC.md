@@ -33,6 +33,8 @@ The parser reads a value, sees the `@`, and knows the value was a *name*; sees t
 
 This document is the normative specification: the grammar, type system, parsing algorithm, error taxonomy, test vectors, conformance requirements, and security considerations.
 
+**Related documents:** [PHILOSOPHY.md](./PHILOSOPHY.md) — a brand report on the position of the delimiter in the universe.
+
 ---
 
 ## Table of Contents

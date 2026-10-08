@@ -324,6 +324,7 @@ Parsers MUST report errors for:
 | `DuplicateField` | Same field appears twice in record |
 | `TypeMismatch` | Value doesn't match declared type |
 | `MissingSeparator` | No blank line between sections |
+| `UnterminatedValue` | Quoted value has no closing quote |
 
 ### 7.2 Error Format
 
@@ -440,6 +441,25 @@ test@
 ```
 
 **Expected:** Parse error - duplicate delimiter `@`
+
+### 8.7 Wrapped Values
+
+**Input:**
+```
+str:"name"@
+str:"note"#
+
+Alice@"contains @ and # symbols"#
+Bob@plain note#
+```
+
+**Expected Output:**
+```json
+[
+  {"name": "Alice", "note": "contains @ and # symbols"},
+  {"name": "Bob", "note": "plain note"}
+]
+```
 
 ---
 

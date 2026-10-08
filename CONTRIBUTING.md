@@ -39,15 +39,10 @@ Match the existing code. If the existing code is inconsistent, pick one style an
 ## Testing
 
 ```bash
-# Validate all test vectors
-for f in tests/vectors/valid/*.kdg; do
-  python implementations/kdg.py validate "$f"
-done
-
-# Confirm invalid files produce errors
-python implementations/kdg.py validate tests/vectors/invalid/duplicate-delimiter.kdg
-echo $?  # Should be 1
+python3 tests/run_tests.py
 ```
+
+It validates valid vectors. It confirms invalid vectors fail with the error in the adjacent `.expected` sidecar. It validates examples. It does all of this in both parsers.
 
 ## Questions
 

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Alice",
+    "note": "contains @ and # symbols"
+  },
+  {
+    "name": "Bob",
+    "note": "plain note"
+  },
+  {
+    "name": "He said \"hi\"",
+    "note": "quoted value"
+  }
+]

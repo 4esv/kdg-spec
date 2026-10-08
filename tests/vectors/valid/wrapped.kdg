@@ -1,0 +1,6 @@
+str:"name"@
+str:"note"#
+
+Alice@"contains @ and # symbols"#
+Bob@plain note#
+"He said \"hi\""@quoted value#

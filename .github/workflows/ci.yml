@@ -47,12 +47,12 @@ jobs:
           sudo ln -sf /usr/bin/lua5.4 /usr/local/bin/lua
       - name: Install Kotlin
         run: |
-          base="https://github.com/JetBrains/kotlin/releases/download"
-          ver="v2.2.20"
-          url="$base/$ver/kotlin-compiler-$ver.zip"
-          curl -fsSL --retry 3 --retry-delay 10 "$url" -o /tmp/kotlin.zip
+          gh release download v2.2.20 \
+            --repo JetBrains/kotlin \
+            --pattern "kotlin-compiler-2.2.20.zip" \
+            --dir /tmp
           sudo mkdir -p /opt/kotlin
-          sudo unzip -q /tmp/kotlin.zip -d /opt/kotlin
+          sudo unzip -q /tmp/kotlin-compiler-2.2.20.zip -d /opt/kotlin
           echo "/opt/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
       - name: Install Dart
         run: |

@@ -30,6 +30,7 @@ This is either elegant or unnecessary, depending on who you ask.
 ```bash
 python implementations/kdg.py parse file.kdg
 node implementations/kdg.js validate file.kdg
+go run implementations/kdg.go parse file.kdg
 ```
 
 ---
@@ -137,7 +138,8 @@ kdg-spec/
 │       └── ci.yml
 ├── implementations/
 │   ├── kdg.py
-│   └── kdg.js
+│   ├── kdg.js
+│   └── kdg.go
 ├── tests/
 │   ├── run_tests.py
 │   └── vectors/
@@ -161,7 +163,7 @@ See the `examples/` directory. They are examples.
 python3 tests/run_tests.py
 ```
 
-That is the whole suite. It runs both the Python and JavaScript parsers.
+That is the whole suite. It runs all three parsers: Python, JavaScript, and Go.
 
 It checks every valid vector against its expected JSON. Every invalid vector must fail with the expected error. Every example must validate.
 

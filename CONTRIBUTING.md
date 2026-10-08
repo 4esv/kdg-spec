@@ -42,7 +42,7 @@ Match the existing code. If the existing code is inconsistent, pick one style an
 python3 tests/run_tests.py
 ```
 
-It validates valid vectors. It confirms invalid vectors fail with the error in the adjacent `.expected` sidecar. It validates examples. It does all of this in both parsers.
+It validates valid vectors. It confirms invalid vectors fail with the error in the adjacent `.expected` sidecar. It validates examples. It does all of this in every parser.
 
 ## Questions
 

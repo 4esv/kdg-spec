@@ -213,6 +213,11 @@ Maintenance is ongoing in the sense that the repository exists.
 
 ---
 
+## Further Reading
+
+- [SPEC.md](./SPEC.md) — the normative specification.
+- [PHILOSOPHY.md](./PHILOSOPHY.md) — the position of the delimiter in the universe.
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).

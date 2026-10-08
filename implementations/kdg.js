@@ -71,6 +71,13 @@ class MissingSeparatorError extends KDGError {
   }
 }
 
+class UnterminatedValueError extends KDGError {
+  constructor(message, line) {
+    super(message, line);
+    this.name = "UnterminatedValueError";
+  }
+}
+
 const VALID_TYPES = new Set(["str", "int", "float", "bool", "date"]);
 
 // Characters that cannot be delimiters
@@ -187,6 +194,37 @@ function convertValue(value, typeName, lineNum) {
 }
 
 /**
+ * Scan a double-quoted value beginning at line[start] === '"'.
+ * @param {string} line
+ * @param {number} start
+ * @param {number} lineNum
+ * @returns {{value: string, end: number}}
+ */
+function scanWrappedValue(line, start, lineNum) {
+  const chars = [];
+  let i = start + 1;
+
+  while (i < line.length) {
+    const c = line[i];
+
+    if (c === "\\" && i + 1 < line.length && (line[i + 1] === '"' || line[i + 1] === "\\")) {
+      chars.push(line[i + 1]);
+      i += 2;
+      continue;
+    }
+
+    if (c === '"') {
+      return { value: chars.join(""), end: i + 1 };
+    }
+
+    chars.push(c);
+    i += 1;
+  }
+
+  throw new UnterminatedValueError("Unterminated quoted value", lineNum);
+}
+
+/**
  * Parse a single record line into an object.
  * @param {string} line - The record line
  * @param {Map<string, {type: string, label: string}>} delimiterMap
@@ -202,6 +240,34 @@ function parseRecord(line, delimiterMap, lineNum) {
   let position = 0;
 
   while (position < line.length) {
+    let value;
+
+    // A field is value-then-delimiter. The value may be wrapped in double
+    // quotes, which lets it contain delimiter characters (SPEC 6.2).
+    if (line[position] === '"') {
+      const scanned = scanWrappedValue(line, position, lineNum);
+      value = scanned.value;
+      position = scanned.end;
+
+      if (position >= line.length) {
+        throw new KDGError(`Missing delimiter after value "${value}"`, lineNum);
+      }
+    } else {
+      const start = position;
+      while (position < line.length && !delimiterMap.has(line[position])) {
+        position += 1;
+      }
+
+      if (position === line.length) {
+        throw new KDGError(
+          `No delimiter found for value starting at column ${start}`,
+          lineNum
+        );
+      }
+
+      value = line.slice(start, position);
+    }
+
     const delimiter = line[position];
 
     if (!delimiterMap.has(delimiter)) {
@@ -213,25 +279,15 @@ function parseRecord(line, delimiterMap, lineNum) {
 
     const fieldDef = delimiterMap.get(delimiter);
 
-    if (record.hasOwnProperty(fieldDef.label)) {
+    if (Object.hasOwn(record, fieldDef.label)) {
       throw new DuplicateFieldError(
         `Duplicate field in record: "${fieldDef.label}"`,
         lineNum
       );
     }
 
-    // Find the end of this field's value
-    let end = line.length;
-    for (let i = position + 1; i < line.length; i++) {
-      if (delimiterMap.has(line[i])) {
-        end = i;
-        break;
-      }
-    }
-
-    const value = line.slice(position + 1, end);
     record[fieldDef.label] = convertValue(value, fieldDef.type, lineNum);
-    position = end;
+    position += 1;
   }
 
   return record;
@@ -244,6 +300,13 @@ function parseRecord(line, delimiterMap, lineNum) {
  */
 function parse(content) {
   const lines = content.replace(/\r\n/g, "\n").split("\n");
+
+  // A trailing newline produces a spurious final empty element. Drop it so a
+  // document with no blank-line separator is reported as MissingSeparator
+  // instead of having its first record misread as a definition.
+  if (lines.length && lines[lines.length - 1] === "") {
+    lines.pop();
+  }
 
   // Find the separator (blank line)
   let separatorIdx = null;

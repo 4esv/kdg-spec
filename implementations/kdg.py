@@ -41,43 +41,33 @@ class KDGError(Exception):
 class DuplicateDelimiterError(KDGError):
     """Raised when a delimiter is defined more than once."""
 
-    pass
-
 
 class InvalidTypeError(KDGError):
     """Raised when an unknown type is specified."""
-
-    pass
 
 
 class MalformedDefinitionError(KDGError):
     """Raised when a definition line doesn't match the grammar."""
 
-    pass
-
 
 class UndefinedDelimiterError(KDGError):
     """Raised when a record uses an undeclared delimiter."""
-
-    pass
 
 
 class DuplicateFieldError(KDGError):
     """Raised when a field appears twice in the same record."""
 
-    pass
-
 
 class TypeMismatchError(KDGError):
     """Raised when a value doesn't match its declared type."""
-
-    pass
 
 
 class MissingSeparatorError(KDGError):
     """Raised when there's no blank line between sections."""
 
-    pass
+
+class UnterminatedValueError(KDGError):
+    """Raised when a quoted value has no closing quote."""
 
 
 VALID_TYPES = frozenset({"str", "int", "float", "bool", "date"})
@@ -120,13 +110,13 @@ def convert_value(value: str, type_name: str, line_num: int) -> Any:
         try:
             return int(value)
         except ValueError:
-            raise TypeMismatchError(f"Invalid integer: {value!r}", line_num)
+            raise TypeMismatchError(f"Invalid integer: {value!r}", line_num) from None
 
     if type_name == "float":
         try:
             return float(value)
         except ValueError:
-            raise TypeMismatchError(f"Invalid float: {value!r}", line_num)
+            raise TypeMismatchError(f"Invalid float: {value!r}", line_num) from None
 
     if type_name == "bool":
         lower = value.lower()
@@ -145,9 +135,30 @@ def convert_value(value: str, type_name: str, line_num: int) -> Any:
             date(year, month, day)  # Validate it's a real date
             return value  # Return as string for JSON compatibility
         except (ValueError, TypeError):
-            raise TypeMismatchError(f"Invalid date (expected YYYY-MM-DD): {value!r}", line_num)
+            raise TypeMismatchError(f"Invalid date (expected YYYY-MM-DD): {value!r}", line_num) from None
 
     raise InvalidTypeError(f"Unknown type: {type_name!r}", line_num)
+
+
+def _scan_wrapped_value(line: str, start: int, line_num: int) -> tuple[str, int]:
+    """Scan a double-quoted value beginning at line[start] == '"'.
+
+    Returns ``(value, position_after_closing_quote)``. Backslash escapes for
+    ``\"`` and ``\\`` are honoured per SPEC 6.2.
+    """
+    chars: list[str] = []
+    i = start + 1
+    while i < len(line):
+        c = line[i]
+        if c == "\\" and i + 1 < len(line) and line[i + 1] in ('"', "\\"):
+            chars.append(line[i + 1])
+            i += 2
+            continue
+        if c == '"':
+            return "".join(chars), i + 1
+        chars.append(c)
+        i += 1
+    raise UnterminatedValueError("Unterminated quoted value", line_num)
 
 
 def parse_record(
@@ -161,6 +172,23 @@ def parse_record(
     position = 0
 
     while position < len(line):
+        # A field is value-then-delimiter. The value may be wrapped in double
+        # quotes, which lets it contain delimiter characters (SPEC 6.2).
+        if line[position] == '"':
+            value, position = _scan_wrapped_value(line, position, line_num)
+            if position >= len(line):
+                raise KDGError(f"Missing delimiter after value {value!r}", line_num)
+        else:
+            start = position
+            while position < len(line) and line[position] not in delimiter_map:
+                position += 1
+            if position == len(line):
+                raise KDGError(
+                    f"No delimiter found for value starting at column {start}",
+                    line_num,
+                )
+            value = line[start:position]
+
         delimiter = line[position]
 
         if delimiter not in delimiter_map:
@@ -175,16 +203,8 @@ def parse_record(
                 f"Duplicate field in record: {field_def.label!r}", line_num
             )
 
-        # Find the end of this field's value
-        end = len(line)
-        for i in range(position + 1, len(line)):
-            if line[i] in delimiter_map:
-                end = i
-                break
-
-        value = line[position + 1 : end]
         record[field_def.label] = convert_value(value, field_def.type, line_num)
-        position = end
+        position += 1
 
     return record
 
@@ -203,6 +223,12 @@ def parse(content: str) -> list[dict[str, Any]]:
         KDGError: If the document is malformed
     """
     lines = content.replace("\r\n", "\n").split("\n")
+
+    # A trailing newline produces a spurious final empty element. Drop it so a
+    # document with no blank-line separator is reported as MissingSeparator
+    # instead of having its first record misread as a definition.
+    if lines and lines[-1] == "":
+        lines.pop()
 
     # Find the separator (blank line)
     separator_idx = None
@@ -306,12 +332,12 @@ def main() -> int:
     filepath = sys.argv[2]
 
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             content = f.read()
     except FileNotFoundError:
         print(f"Error: File not found: {filepath}", file=sys.stderr)
         return 1
-    except IOError as e:
+    except OSError as e:
         print(f"Error reading file: {e}", file=sys.stderr)
         return 1
 

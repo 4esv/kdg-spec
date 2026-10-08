@@ -1,0 +1,14 @@
+[
+  {
+    "greeting": "Hello",
+    "name": "World"
+  },
+  {
+    "greeting": "Bonjour",
+    "name": "Marie"
+  },
+  {
+    "greeting": "Hola",
+    "name": "Carlos"
+  }
+]

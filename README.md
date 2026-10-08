@@ -150,6 +150,20 @@ See the `examples/` directory. They are examples.
 
 ---
 
+## Testing
+
+```bash
+python3 tests/run_tests.py
+```
+
+That is the whole suite. It runs both the Python and JavaScript parsers.
+
+It checks every valid vector against its expected JSON. Every invalid vector must fail with the expected error. Every example must validate.
+
+CI runs it on every push and pull request. You do not have to remember.
+
+---
+
 ## FAQ
 
 **Why not just use JSON?**

@@ -88,7 +88,7 @@ const RESERVED_CHARS = new Set(
 );
 
 // Regex for parsing definition lines
-const DEFINITION_PATTERN = /^(str|int|float|bool|date):"((?:[^"\\]|\\.)*)\"(.)$/;
+const DEFINITION_PATTERN = /^([a-z]+):"((?:[^"\\]|\\.)*)\"(.)$/;
 
 /**
  * Parse a single field definition line.

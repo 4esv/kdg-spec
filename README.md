@@ -1,6 +1,7 @@
 # KDG
 
-**Key-Delimited Garbage**. The second-best format you'll ever need.
+**Key-Delimited Garbage**. 
+The second-best data format you'll ever need.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 

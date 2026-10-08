@@ -1,40 +1,24 @@
 # Contributing
 
-Contributions are accepted.
+Please don't.
 
 ## Bug Reports
 
-If the parser does not parse, or parses incorrectly, open an issue. Include:
-
-- The input
-- The expected output
-- The actual output
-
-This is usually sufficient.
+If a parser does not parse, or parses incorrectly, this is usually the specification being followed. Include the input, the expected output, and the actual output, so that the discrepancy can be filed correctly. No action will be taken, but the form will be correct.
 
 ## New Implementations
 
-If you write a KDG parser in another language:
+There are nine implementations. The language you are considering has, by now, almost certainly been done, or been deliberately avoided.
 
-1. It must pass all test vectors in `tests/vectors/`
-2. It must follow `SPEC.md`
-3. It should have no runtime dependencies
-4. It should include a CLI
-
-Place it in `implementations/`. Name it `kdg.{ext}`.
+If you proceed regardless: the parser must pass all test vectors, follow SPEC.md, have no runtime dependencies, and ship a CLI. Place it in `implementations/` and name it `kdg.{ext}`. This is the procedure. The procedure is not an invitation.
 
 ## Pull Requests
 
-1. Fork the repository
-2. Make changes
-3. Ensure tests pass
-4. Submit PR
-
-The process is standard.
+Fork, change, test, submit. Reconsider at any point, preferably before submitting.
 
 ## Code Style
 
-Match the existing code. If the existing code is inconsistent, pick one style and be consistent with that.
+Match the existing code. Where the existing code is inconsistent, the inconsistency is the style.
 
 ## Testing
 
@@ -42,12 +26,12 @@ Match the existing code. If the existing code is inconsistent, pick one style an
 python3 tests/run_tests.py
 ```
 
-It validates valid vectors. It confirms invalid vectors fail with the error in the adjacent `.expected` sidecar. It validates examples. It does all of this in every parser.
+It validates every vector, in every parser, so that you do not have to.
 
 ## Questions
 
-Open an issue. Label it appropriately.
+The FAQ has already answered it.
 
 ## Code of Conduct
 
-Be reasonable.
+Be reasonable. Failing that, be brief.

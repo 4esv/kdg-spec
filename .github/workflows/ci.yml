@@ -49,7 +49,8 @@ jobs:
         run: |
           base="https://github.com/JetBrains/kotlin/releases/download"
           ver="v2.2.20"
-          curl -sSL "$base/$ver/kotlin-compiler-$ver.zip" -o /tmp/kotlin.zip
+          url="$base/$ver/kotlin-compiler-$ver.zip"
+          curl -fsSL --retry 3 --retry-delay 10 "$url" -o /tmp/kotlin.zip
           sudo mkdir -p /opt/kotlin
           sudo unzip -q /tmp/kotlin.zip -d /opt/kotlin
           echo "/opt/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
@@ -57,7 +58,7 @@ jobs:
         run: |
           base="https://storage.googleapis.com/dart-archive"
           path="/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip"
-          curl -sSL "$base$path" -o /tmp/dart.zip
+          curl -fsSL --retry 3 --retry-delay 10 "$base$path" -o /tmp/dart.zip
           sudo mkdir -p /opt/dart
           sudo unzip -q /tmp/dart.zip -d /opt/dart
           echo "/opt/dart/dart-sdk/bin" >> "$GITHUB_PATH"
@@ -65,7 +66,7 @@ jobs:
         run: |
           base="https://download.swift.org/swift-6.1-release/ubuntu2404"
           path="/swift-6.1-RELEASE/swift-6.1-RELEASE-ubuntu24.04.tar.gz"
-          curl -sSL "$base$path" -o /tmp/swift.tgz
+          curl -fsSL --retry 3 --retry-delay 10 "$base$path" -o /tmp/swift.tgz
           sudo mkdir -p /opt/swift
           sudo tar -xzf /tmp/swift.tgz -C /opt/swift --strip-components=1
           echo "/opt/swift/usr/bin" >> "$GITHUB_PATH"

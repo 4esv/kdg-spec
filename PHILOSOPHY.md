@@ -1,4 +1,4 @@
-# Key-Delimited Garbage: Design Rationale
+# KDG: Design Rationale
 
 **Status of this document**
 
@@ -8,7 +8,7 @@ This document is informational. It does not define the format. The normative def
 
 ## 1. Scope
 
-This document describes the principles underlying the Key-Delimited Garbage (KDG) format.
+This document describes the principles underlying the KDG format.
 
 Section 2 states the information-theoretic basis of the design. Sections 3 through 6 record correspondences between properties of the format and quantities that appear elsewhere in mathematics and physics. Sections 7 through 9 address the separator, the symmetry of the record, and biological precedent. Section 10 defines the operational concept of slack.
 

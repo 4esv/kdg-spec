@@ -1,4 +1,4 @@
-# KDG (Key-Delimited Garbage) parser - BQN (CBQN) implementation.
+# KDG (Key-Delimited Grammar) parser - BQN (CBQN) implementation.
 #
 # Usage:
 #   bqn kdg.bqn parse <file>            Parse KDG to JSON

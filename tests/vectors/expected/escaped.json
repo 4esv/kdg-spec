@@ -1,0 +1,10 @@
+[
+  {
+    "user\"s name": "Alice",
+    "path\\to\\file": "C:\\Users\\Alice"
+  },
+  {
+    "user\"s name": "Bob",
+    "path\\to\\file": "/home/bob"
+  }
+]

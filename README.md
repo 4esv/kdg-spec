@@ -31,6 +31,12 @@ This is either elegant or unnecessary, depending on who you ask.
 python implementations/kdg.py parse file.kdg
 node implementations/kdg.js validate file.kdg
 go run implementations/kdg.go parse file.kdg
+cc -o /tmp/kdg-c implementations/kdg.c && /tmp/kdg-c parse file.kdg
+bash implementations/kdg.sh parse file.kdg
+runghc implementations/kdg.hs parse file.kdg
+pwsh -File implementations/kdg.ps1 parse file.kdg
+Rscript implementations/kdg.R parse file.kdg
+bqn implementations/kdg.bqn parse file.kdg
 ```
 
 ---
@@ -109,7 +115,7 @@ python implementations/kdg.py validate file.kdg
 python implementations/kdg.py convert file.kdg csv
 ```
 
-The JavaScript implementation accepts identical arguments.
+Every implementation accepts identical arguments. See [SPEC.md](./SPEC.md#appendix-a-reference-implementations) for the full invocation list.
 
 ---
 
@@ -122,6 +128,12 @@ The full specification is in [SPEC.md](./SPEC.md). It contains:
 - Parsing algorithm
 - Error taxonomy
 - Security considerations
+
+---
+
+## Reference Implementations
+
+Nine, in nine languages: Python, JavaScript, Go, C, Bash, Haskell, PowerShell, R, and BQN. Each is zero-dependency and ships a CLI. See [SPEC.md](./SPEC.md#appendix-a-reference-implementations).
 
 ---
 
@@ -139,7 +151,13 @@ kdg-spec/
 ├── implementations/
 │   ├── kdg.py
 │   ├── kdg.js
-│   └── kdg.go
+│   ├── kdg.go
+│   ├── kdg.c
+│   ├── kdg.sh
+│   ├── kdg.hs
+│   ├── kdg.ps1
+│   ├── kdg.R
+│   └── kdg.bqn
 ├── tests/
 │   ├── run_tests.py
 │   └── vectors/
@@ -163,7 +181,7 @@ See the `examples/` directory. They are examples.
 python3 tests/run_tests.py
 ```
 
-That is the whole suite. It runs all three parsers: Python, JavaScript, and Go.
+That is the whole suite. It runs all nine parsers. Any whose toolchain is not installed are skipped.
 
 It checks every valid vector against its expected JSON. Every invalid vector must fail with the expected error. Every example must validate.
 

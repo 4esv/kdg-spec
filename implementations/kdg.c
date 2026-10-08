@@ -1,4 +1,4 @@
-/* kdg.c - KDG (Key-Delimited Garbage) parser in C99, standard library only.
+/* kdg.c - KDG (Key-Delimited Grammar) parser in C99, standard library only.
  *
  * CLI (mirrors implementations/kdg.go):
  *   kdg parse <file>            Parse KDG to JSON on stdout, exit 0

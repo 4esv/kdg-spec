@@ -1,4 +1,4 @@
-# KDG: Key-Delimited Garbage
+# KDG: Key-Delimited Grammar
 
 **Format Specification**
 
@@ -17,7 +17,7 @@
 
 ## Abstract
 
-KDG (Key-Delimited Garbage) is a text-based data serialization format in which **field identity is encoded in the choice of delimiter**, rather than in position (CSV) or in an explicit key (JSON).
+KDG (Key-Delimited Grammar) is a text-based data serialization format in which **field identity is encoded in the choice of delimiter**, rather than in position (CSV) or in an explicit key (JSON).
 
 Every field in a KDG document is assigned a unique delimiter character. In the data section, a value is written followed by its field's delimiter:
 
@@ -34,6 +34,8 @@ The parser reads a value, sees the `@`, and knows the value was a *name*; sees t
 This document is the normative specification: the grammar, type system, parsing algorithm, error taxonomy, test vectors, conformance requirements, and security considerations.
 
 **Related documents:** [PHILOSOPHY.md](./PHILOSOPHY.md), the design rationale.
+
+**Naming:** KDG is a three-letter handle. This specification uses the expansion "Key-Delimited Grammar". "Key-Delimited Garbage" is an accepted alternative. The full list of expansions is in the [README](./README.md#the-name).
 
 ---
 

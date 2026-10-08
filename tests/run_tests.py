@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """KDG test harness.
 
-Runs both reference parsers over the test vectors and examples and checks the
-results against expected outputs. Zero dependencies beyond Python 3 and Node
-(for the JavaScript parser).
+Runs every reference parser over the test vectors and examples and checks the
+results against expected outputs. Zero dependencies beyond Python 3, Node
+(for the JavaScript parser), and Go (for the Go parser).
 
 Usage:
     python3 tests/run_tests.py
@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 IMPLS = [
     ("python", ["python3", str(ROOT / "implementations" / "kdg.py")]),
     ("node", ["node", str(ROOT / "implementations" / "kdg.js")]),
+    ("go", ["go", "run", str(ROOT / "implementations" / "kdg.go")]),
 ]
 
 VALID_DIR = ROOT / "tests" / "vectors" / "valid"

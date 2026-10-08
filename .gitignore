@@ -78,3 +78,7 @@ temp/
 
 # Pi agent state
 .pi/
+
+# Editor / language-server state
+.expert/
+erl_crash.dump

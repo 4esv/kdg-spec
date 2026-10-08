@@ -57,13 +57,9 @@ This is either elegant or unnecessary, depending on who you ask.
 python implementations/kdg.py parse file.kdg
 node implementations/kdg.js validate file.kdg
 go run implementations/kdg.go parse file.kdg
-cc -o /tmp/kdg-c implementations/kdg.c && /tmp/kdg-c parse file.kdg
-bash implementations/kdg.sh parse file.kdg
-runghc implementations/kdg.hs parse file.kdg
-pwsh -File implementations/kdg.ps1 parse file.kdg
-Rscript implementations/kdg.R parse file.kdg
-bqn implementations/kdg.bqn parse file.kdg
 ```
+
+And the same, in twenty-one other languages. See [SPEC.md](./SPEC.md#appendix-a-reference-implementations).
 
 ---
 
@@ -159,7 +155,7 @@ The full specification is in [SPEC.md](./SPEC.md). It contains:
 
 ## Reference Implementations
 
-Nine, in nine languages: Python, JavaScript, Go, C, Bash, Haskell, PowerShell, R, and BQN. Each is zero-dependency and ships a CLI. See [SPEC.md](./SPEC.md#appendix-a-reference-implementations).
+Twenty-four, in twenty-four languages: Python, JavaScript, Go, C, C++, Rust, TypeScript, Java, Kotlin, C#, Bash, Haskell, PowerShell, R, BQN, Erlang, Elixir, Ruby, Perl, Lua, Swift, Dart, Julia, and Tcl. Each is zero-dependency and ships a CLI. See [SPEC.md](./SPEC.md#appendix-a-reference-implementations).
 
 ---
 
@@ -179,11 +175,26 @@ kdg-spec/
 │   ├── kdg.js
 │   ├── kdg.go
 │   ├── kdg.c
+│   ├── kdg.cpp
+│   ├── kdg.rs
+│   ├── kdg.ts
+│   ├── kdg.java
+│   ├── kdg.kt
+│   ├── kdg.cs
 │   ├── kdg.sh
 │   ├── kdg.hs
 │   ├── kdg.ps1
 │   ├── kdg.R
-│   └── kdg.bqn
+│   ├── kdg.bqn
+│   ├── kdg.erl
+│   ├── kdg.exs
+│   ├── kdg.rb
+│   ├── kdg.pl
+│   ├── kdg.lua
+│   ├── kdg.swift
+│   ├── kdg.dart
+│   ├── kdg.jl
+│   └── kdg.tcl
 ├── tests/
 │   ├── run_tests.py
 │   └── vectors/
@@ -207,7 +218,7 @@ See the `examples/` directory. They are examples.
 python3 tests/run_tests.py
 ```
 
-That is the whole suite. It runs all nine parsers. Any whose toolchain is not installed are skipped.
+That is the whole suite. It runs all twenty-four parsers. Any whose toolchain is not installed are skipped.
 
 It checks every valid vector against its expected JSON. Every invalid vector must fail with the expected error. Every example must validate.
 

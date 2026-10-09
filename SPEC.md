@@ -35,7 +35,7 @@ This document is the normative specification: the grammar, type system, parsing 
 
 **Related documents:** [PHILOSOPHY.md](./PHILOSOPHY.md), the design rationale.
 
-**Naming:** KDG is a three-letter handle. This specification uses the expansion "Key-Delimited Grammar". "Key-Delimited Garbage" is an accepted alternative. The full list of expansions is in the [README](./README.md#the-name).
+**Naming:** This specification uses the expansion "Key-Delimited Grammar". Others are listed in the [README](./README.md#the-name).
 
 ---
 
@@ -717,7 +717,7 @@ Because field identity is the delimiter itself, a document whose *data* is attac
 
 ## 12. Compatibility Considerations
 
-This section records, for the avoidance of doubt, everything the format does and does not account for. It is exhaustive by intent: a reader should never have to ask whether a concern was considered, because it was. The section carries no normative weight, and nothing below is testable by the conformance suite, but every position is stated, and each is final.
+This section records, for the avoidance of doubt, everything the format does and does not account for. None of it is normative. All of it is final.
 
 | Concern | Position |
 |---------|----------|
@@ -758,8 +758,8 @@ KDG is plain text, and it stays that way.
 ### 12.2 Human Languages
 
 - **Values and labels.** Both are UTF-8, and both accept any script. The unicode test vector (§8.4) exercises Japanese, Russian, and Arabic; nothing in the grammar distinguishes them from Latin text.
-- **The schema vocabulary.** The five type names (`str`, `int`, `float`, `bool`, `date`) are English, and they are a closed set of five tokens. An author does not need to read English to use them; a parser needs to recognize five strings. Localizing five keywords is left as an exercise for the reader, and the specification declines to attempt it.
-- **Script direction.** Right-to-left scripts are representable. The specification defines the order of bytes, not the direction in which they are displayed; bidirectional rendering is a property of the renderer, not the format. A record is a sequence, and a sequence is directionless until it is displayed.
+- **The schema vocabulary.** The five type names (`str`, `int`, `float`, `bool`, `date`) are English. Localizing them is left as an exercise for the reader.
+- **Script direction.** Right-to-left scripts are representable. The specification defines the order of bytes, not the direction in which they are displayed.
 
 ### 12.3 Time
 
@@ -785,7 +785,7 @@ It has no control flow, no recursion, no state carried between records, and no w
 
 ### 12.5 Non-Human Life
 
-The format makes no assumption about the species, substrate, or continued existence of its author or reader. It is a byte sequence, and it treats its reader as a byte reader. This is the only assumption the format can make and remain a format.
+The format makes no assumption about the species, substrate, or continued existence of its author or reader. It is a byte sequence, and it treats its reader as a byte reader.
 
 Prior art for communicating with beings who do not share our symbol system exists, and the format is aware of it:
 
@@ -803,7 +803,7 @@ KDG makes no claim to survive deep time. It is text, and text assumes a reader w
 The format's position is stated for completeness:
 
 - A KDG document is exactly as durable as the medium it is written on, and no more self-explanatory than the `:`, the `"`, and the blank line it assumes.
-- Carved into stone, a KDG document would still parse, because its schema syntax is a colon, two quotation marks, a delimiter, and one blank line. The specification notes this, then declines to make a virtue of it, because the same is true of almost any format, and because the reader who can recognize a delimiter has already been assumed.
+- Carved into stone, a KDG document would still parse. So would almost anything.
 - If a future being can read this specification, it can read a KDG document. If it cannot, no delimiter choice will save the document, and none is offered.
 
 ### 12.7 Everything Else
@@ -818,7 +818,7 @@ The remainder, accounted for so that no one must account for it again:
 - **Extremely long lines.** A record is bounded only by available memory. Section 10.1 recommends a configurable maximum, which is the format's entire position on the matter.
 - **Trailing newline.** A document ending in a newline and one that does not are equivalent (§5.1). The trailing newline is a line-splitting artifact, not a record.
 - **Duplicate blank lines.** Ignored (§2.3).
-- **The heat death of the universe.** The format makes no durability claim beyond its medium (§12.6), and the eventual thermodynamic equilibrium of the cosmos is outside its scope. A KDG document will not survive it. Nothing will. This is recorded so that no durability guarantee is ever attributed to the format by default.
+- **The heat death of the universe.** Out of scope. A KDG document will not survive it. Nothing will.
 
 ### 12.8 Cardinality
 
@@ -832,11 +832,11 @@ The format's sizes, stated so that no one has to count them:
 | Valid schemas | countably infinite (ℵ₀) |
 | Valid documents | countably infinite (ℵ₀) |
 
-The set of all KDG documents is countably infinite: the grammar is finite, but a document may be arbitrarily long, and the set of finite strings over any finite alphabet is countable. The types are finite, the errors are finite, and the permitted delimiters are a finite subset of the Unicode repertoire. It is the labels that make the schemas infinite, and it is the lengths that make the documents infinite.
+The set of all KDG documents is countably infinite: the grammar is finite, but a document may be arbitrarily long, and the set of finite strings over any finite alphabet is countable. It is the labels that make the schemas infinite, and it is the lengths that make the documents infinite.
 
 ### 12.9 Physics
 
-- **Relativity.** Addressed under Time (§12.3): the format has no clock, so it has no time dilation. A document at rest and a document at a substantial fraction of *c* parse identically, which is a property of the bytes, not of the physics.
+- **Relativity.** See Time (§12.3).
 - **Quantum mechanics.** A record line, before parsing, is a superposition of field orderings: every field is present, and their order is unobservable and, by §1.2, irrelevant. Parsing is the measurement, and it collapses the record into a single object. Unlike a measurement, it loses no information. Most analogies to quantum mechanics end at exactly this point, and so does this one.
 - **Entropy.** The information content of a document is its length weighted by the entropy of its symbol distribution ([PHILOSOPHY.md](./PHILOSOPHY.md), §2). Parsing is lossless: a document does not gain or lose information by being re-expressed as JSON, CSV, or a record object. Information is therefore conserved across parsing. Compare [PHILOSOPHY.md](./PHILOSOPHY.md), §8.
 
@@ -845,9 +845,9 @@ The set of all KDG documents is countably infinite: the grammar is finite, but a
 KDG holds the following certifications:
 
 - **Organic.** Produced without synthetic pesticides or fertilizers, because it is not produced, and without synthetic anything, because it contains nothing.
-- **Non-GMO.** The specification has not been genetically modified. The reference implementations are written, not bred, and none of them has a genome to modify.
+- **Non-GMO.** The specification has not been genetically modified. The reference implementations are written, not bred.
 - **Cruelty-free and vegan.** No animal was used in the design, testing, or distribution of KDG, and no animal product appears in any document, because no product of any kind appears in any document.
-- **Gluten-free, kosher, and halal.** All three, for the same reason: KDG is not food, and its documents are not edible. A `date` field is a calendar day, not a fruit, which the specification confirms with some relief.
+- **Gluten-free, kosher, and halal.** All three. A `date` field is a calendar day, not a fruit.
 - **Dolphin-safe and conflict-free.** No dolphin is harmed, and no conflict mineral is required, to produce or consume a KDG document. The format's supply chain is a keyboard, and its only extraction is the extraction of fields, which is legal.
 - **Cage-free, free-range, grass-fed, pasture-raised.** Nothing is caged, because nothing is kept; nothing is fed, because nothing eats.
 - **Locally sourced.** Produced wherever you are, from materials you already had.
@@ -873,8 +873,8 @@ Not a significant source of anything. KDG is not food and is not intended to be 
 
 ### 12.12 Theology, Metaphysics, and Jurisprudence
 
-- **Theology.** KDG has no deity, and is compatible with all faiths and none. It takes no position on the origin of the blank line. The blank line is a boundary condition, not a creation event; the specification does not claim the document was created *ex nihilo*, only that it was written.
-- **Metaphysics.** Whether a record exists before it is parsed is a question the format declines to answer. Before parsing, a record is a string; after parsing, it is an object. The transition is the parser's business, not the format's.
+- **Theology.** KDG has no deity, and is compatible with all faiths and none. It takes no position on the origin of the blank line, and does not claim the document was created *ex nihilo*, only that it was written.
+- **Metaphysics.** Whether a record exists before it is parsed is a question the format declines to answer. That is the parser's business, not the format's.
 - **Free will.** Parsing is deterministic: the same document and the same parser produce the same output, always. A document has no free will, and neither, in this one respect, does a parser.
 - **Personhood.** A KDG document is not a person, natural or legal. It cannot sign, sue, or be sued. It may be stored in a jurisdiction, which is the only sense in which it has a location. It cannot be named in a will, though it may be the subject of one, which is a distinction the format is not equipped to litigate.
 - **Regulatory compliance.** KDG stores data; it does not process, retain, or transfer it; those are the acts of the programs that read it. The format is therefore compliant with every data regulation by the same mechanism a hammer is compliant with traffic law: it is not the thing the law governs.
@@ -912,7 +912,7 @@ The following warnings are included without elaboration, because elaboration wou
 - If a document parses for more than four hours, consult a specialist.
 - Do not parse documents you do not trust. Do not trust documents you have parsed. These are not the same instruction.
 
-Nothing in this section is normative, and nothing in it is required to implement the format. It exists so that no one must ask, and no one must wonder. If a concern can be thought about, it has been thought about; if it has been thought about, it is here.
+If a concern can be thought about, it has been thought about; if it has been thought about, it is here.
 
 ---
 

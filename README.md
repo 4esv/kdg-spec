@@ -6,16 +6,6 @@
 
 ---
 
-## Foreword
-
-KDG is a work of deadpan performance art for people who read RFCs and grammar specifications for pleasure.
-
-The specification is written with the seriousness that real standards reserve for real problems, applied to a format of no particular consequence. This is not a defect; it is the medium. The seriousness is genuine, the subject is not, and the tension between the two is the entire project. Everything in this repository is taken to its logical extreme.
-
-If you already understood this, nothing here will surprise you. If you did not, the rest of the repository will be of limited interest, and it has been designed accordingly.
-
----
-
 ## The Name
 
 KDG is a three-letter handle, pronounced "kay-dee-gee". The expansion is deliberately not fixed.
@@ -150,6 +140,7 @@ The full specification is in [SPEC.md](./SPEC.md). It contains:
 - Parsing algorithm
 - Error taxonomy
 - Security considerations
+- Compatibility considerations (accessibility, languages, time, aliens, nuclear semiotics, and more)
 
 ---
 
@@ -239,14 +230,6 @@ You can use CSV.
 **When should I use KDG?**
 
 That is between you and your data.
-
-**Is KDG a joke?**
-
-KDG is a serious specification of a format of no consequence. Whether that constitutes a joke is left as an exercise for the reader, who is the intended audience for the question.
-
-**Who is this for?**
-
-People who read RFCs and grammar specifications for fun. Everyone else may stop here and lose nothing.
 
 **Is this production-ready?**
 

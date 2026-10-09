@@ -55,7 +55,7 @@ The specification defines five types and eight error conditions.
 
 Five and eight are consecutive terms of the Fibonacci sequence; the next term is thirteen. The ratio of consecutive Fibonacci terms tends to the golden ratio, and 8/5 = 1.6 approximates 1.618.
 
-No normative significance is attached to this correspondence. The type system has five members because that is the number of members it has, and the error taxonomy has eight members for the same reason. That the two counts are consecutive Fibonacci terms is an observation about the counts, not a property of the format.
+No normative significance is attached to this correspondence. The type system has five members because that is the number of members it has, and the error taxonomy has eight members for the same reason.
 
 ---
 
